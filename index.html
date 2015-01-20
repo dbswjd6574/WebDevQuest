@@ -3,6 +3,166 @@
 <head lang="en">
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="css/main.css"/>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript">
+
+ window.onload=function(){
+	 Array.prototype.remove = function (index) {this.splice(index, 1); }
+	 
+	 var menu=[{"categoryId":"253126", "categoryName":"[오늘의 추천]", "parentCategoryId":"0","subCategoryPcgView":"N"},
+	           {"categoryId":"1202965", "categoryName":"100% 완전 무료관", "parentCategoryId":"0","subCategoryPcgView":"N"},
+	           {"categoryId":"874899", "categoryName":"소셜랭킹 방송", "parentCategoryId":"0","subCategoryPcgView":"N"},
+	           {"categoryId":"2", "categoryName":"영화", "parentCategoryId":"0","subCategoryPcgView":"N"},
+	           {"categoryId":"111", "categoryName":"SBS", "parentCategoryId":"0","subCategoryPcgView":"N"},
+	           {"categoryId":"96733", "categoryName":"MBC", "parentCategoryId":"0","subCategoryPcgView":"N"},
+	           {"categoryId":"54", "categoryName":"KBS", "parentCategoryId":"0","subCategoryPcgView":"N"},
+	           {"categoryId":"249375", "categoryName":"CJ E&amp;M", "parentCategoryId":"0","subCategoryPcgView":"N"},
+    	       {"categoryId":"223", "categoryName":"키즈&amp;어린이", "parentCategoryId":"0","subCategoryPcgView":"N"},
+    	          
+    	       //100% 완전 무료관 서브메뉴
+    	       {"categoryId":"1104798","categoryName":"완전 무료 영화관","parentCategoryId":"1202965","subCategoryPcgView":"N"},
+    	       {"categoryId":"1202969","categoryName":"(HD)무료 인기드라마","parentCategoryId":"1202965","subCategoryPcgView":"Y"},
+    	       {"categoryId":"1204318","categoryName":"무료 해외드라마","parentCategoryId":"1202965","subCategoryPcgView":"Y"},
+    	       {"categoryId":"1202968","categoryName":"무료 인기 키즈","parentCategoryId":"1202965","subCategoryPcgView":"Y"},
+    	       {"categoryId":"1202967","categoryName":"무료 인기 애니","parentCategoryId":"1202965","subCategoryPcgView":"Y"},
+    	       {"categoryId":"1202966","categoryName":"무료 명품 다큐","parentCategoryId":"1202965","subCategoryPcgView":"Y"},
+    	       {"categoryId":"1202970","categoryName":"무료 지식특강","parentCategoryId":"1202965","subCategoryPcgView":"Y"},
+    	       {"categoryId":"1202971","categoryName":"무료 어학교육","parentCategoryId":"1202965","subCategoryPcgView":"Y"},
+    	       {"categoryId":"1202972","categoryName":"무료 음악콘서트","parentCategoryId":"1202965","subCategoryPcgView":"Y"},
+    	       {"categoryId":"1202973","categoryName":"무료 스포츠레저","parentCategoryId":"1202965","subCategoryPcgView":"Y"},
+    	          
+    	       // 영화 서브메뉴
+    	       {"categoryId":"899962","categoryName":"스마트 실시간 인기순위","parentCategoryId":"2","subCategoryPcgView":"N"},
+    	       {"categoryId":"3","categoryName":"(HD)최신영화","parentCategoryId":"2","subCategoryPcgView":"N"},
+    	       {"categoryId":"428568","categoryName":"(HD)극장동시상영관","parentCategoryId":"2","subCategoryPcgView":"N"},
+    	       {"categoryId":"899963","categoryName":"새로 올라온 영화","parentCategoryId":"2","subCategoryPcgView":"N"},
+    	       {"categoryId":"1240142","categoryName":"국내최초 상영관","parentCategoryId":"2","subCategoryPcgView":"N"},
+    	       {"categoryId":"1162259","categoryName":"평생소장 시리즈관","parentCategoryId":"2","subCategoryPcgView":"N"},
+    	       {"categoryId":"1010788","categoryName":"(HD)평생소장","parentCategoryId":"2","subCategoryPcgView":"N"},
+    	          
+    	       //SBS 서브메뉴
+    	       {"categoryId":"884704","categoryName":"지상파 무제한 이용권","parentCategoryId":"111","subCategoryPcgView":"N"},
+    	       {"categoryId":"1082170","categoryName":"(HD)실시간 인기순위","parentCategoryId":"111","subCategoryPcgView":"N"},
+    	       {"categoryId":"1082171","categoryName":"(HD)방금 놓친 SBS","parentCategoryId":"111","subCategoryPcgView":"N"},
+    	       {"categoryId":"1068035","categoryName":"(HD)SBS 드라마","parentCategoryId":"111","subCategoryPcgView":"Y"},
+    	       {"categoryId":"1068045","categoryName":"(HD)SBS 연예오락","parentCategoryId":"111","subCategoryPcgView":"Y"},
+    	       {"categoryId":"1068046","categoryName":"(HD)SBS 시사교양","parentCategoryId":"111","subCategoryPcgView":"Y"},
+    	       {"categoryId":"1068044","categoryName":"(HD)SBS 핫클립","parentCategoryId":"111","subCategoryPcgView":"Y"},
+    	       {"categoryId":"1068047","categoryName":"(HD)SBS 특집","parentCategoryId":"111","subCategoryPcgView":"Y"},
+    	          
+    	       //100% 완전 무료관->완전 무료 영화관 서브메뉴
+    	       {"categoryId":"1104801","categoryName":"로맨스멜로","parentCategoryId":"1104798","subCategoryPcgView":"N"},
+    	       {"categoryId":"1104802","categoryName":"액션","parentCategoryId":"1104798","subCategoryPcgView":"N"},
+    	       {"categoryId":"1104800","categoryName":"드라마","parentCategoryId":"1104798","subCategoryPcgView":"N"},
+    	       {"categoryId":"1104799","categoryName":"공포호러","parentCategoryId":"1104798","subCategoryPcgView":"N"},
+    	       {"categoryId":"1105181","categoryName":"극장판애니","parentCategoryId":"1104798","subCategoryPcgView":"N"},
+    	       {"categoryId":"1295145","categoryName":"영화로 듣는 음악","parentCategoryId":"1104798","subCategoryPcgView":"N"}
+    	       ];
+	 
+	 
+	 // display_menu 부분-> !!!!!! function 분리해서 호출할 수 있게 해야함
+	 var left_arr=[];
+	 var output='<ul class="menu_list">';
+	 for (var i=0; i<menu.length; i++){
+		 if (menu[i].parentCategoryId == "0"){
+			 
+			 console.log(menu[i].categoryName+',');
+			 
+			 left_arr.push(menu[i].categoryId);
+			 output+='<li class="menu_box">';
+			 output+='<span class="menu" style="max-width: 280px;">';
+			 output+=menu[i].categoryName+'</span>';
+			 output+='</li>';
+			 }
+		 }
+	 output+='</ul>';
+	 console.log(left_arr);
+	 $(".display_menu_list").html(output);
+	 // 처음 포커스 잡기
+	 $(".menu_list li:first").attr("class", "menu_box focus");
+	 var menu_list = $(".menu_list li");
+	 var currentIndex = 0; //현재 인덱스 값 ; 디폴트 0
+	 var lastIndex = menu_list.length - 1; //마지막 인덱스 값
+	 
+	 //키보드 누르면
+	 document.onkeydown=function(e){
+		 var keyCode= window.event.keyCode;
+		 var categoryId;
+		 var sub_output;
+		 if (keyCode == 40){ // 아래 방향
+			 if (currentIndex >= lastIndex){ // 현재 포커스가 마지막 항목에 위치
+				 menu_list.eq(currentIndex).attr("class", "menu_box");
+			 	 menu_list.eq(0).attr("class", "menu_box focus");
+			 	 currentIndex = 0;
+			 	 } else{ // 그 외
+			 		 menu_list.eq(currentIndex).attr("class", "menu_box");
+			 	 	 menu_list.eq(currentIndex+1).attr("class", "menu_box focus");
+			 	 	 currentIndex = currentIndex+1;
+			 	 	 }
+		 
+		 // 서브메뉴(미리보기) 출력
+		 viewSubMenuPreview();
+		 
+		 } else if (keyCode == 38){ // 윗 방향
+			 if (currentIndex <= 0){ // 현재 포커스가 맨 처음 항목에 위치
+				 menu_list.eq(currentIndex).attr("class", "menu_box");
+			 	 menu_list.eq(lastIndex).attr("class", "menu_box focus");
+			 	 currentIndex = lastIndex;
+			 	 } else{ // 그 외
+			 		 menu_list.eq(currentIndex).attr("class", "menu_box");
+			 	 	 menu_list.eq(currentIndex-1).attr("class", "menu_box focus");
+			 	 	 currentIndex = currentIndex-1;
+			 	 	 }
+		 
+		 // 서브메뉴(미리보기) 출력
+		 viewSubMenuPreview();
+		 
+		 } else if (keyCode == 13){ // 엔터키 -> 실행하면 포커스 관련 변수 다 초기화시켜야..
+			 
+			 // 서브 컨텐츠 영역 없는 메뉴일 때 
+			 var output='<ul class="menu_list">';
+			 console.log(left_arr.length);
+			 var curIdx=left_arr[currentIndex];
+			 for (var i = left_arr.length; i >= 0; i--) { // 포인터 관련 배열 초기화
+				 left_arr.remove(i);
+			 }
+			 for (var i=0; i<menu.length; i++){
+				 if (menu[i].parentCategoryId == curIdx){
+					 console.log(menu[i].categoryName+',');
+					 left_arr.push(menu[i].categoryId);
+					 output+='<li class="menu_box">';
+					 output+='<span class="menu" style="max-width: 280px;">';
+					 output+=menu[i].categoryName+'</span>';
+					 output+='</li>';
+					 }
+				 }
+			 console.log(left_arr);
+			 output+='</ul>';
+			 viewSubMenuPreview();
+			 $(".display_menu_list").html(output);
+			 $("#previewList").html(sub_output);
+			 }
+		 }
+	 
+	 function viewSubMenuPreview(){ // 서브메뉴(미리보기) 출력
+		 categoryId=left_arr[currentIndex];
+		 console.log('categoryID:'+categoryId);
+		 sub_output='<ul class="submenu_list">';
+		 for (i=0; i<menu.length; i++){
+			 if (menu[i].parentCategoryId == categoryId){
+				 console.log(menu[i].categoryName+',');
+				 sub_output+='<li>'+menu[i].categoryName+'</li>';
+				 }
+			 }
+		 sub_output+='</ul>';
+		 console.log(sub_output);
+		 $("#previewList").html(sub_output);
+		 }
+	 
+	 
+ };
+
+</script>
 </head>
 <body>
 <div class="container" id="categoryListView" style="display: block;">
@@ -18,45 +178,9 @@
                 </div>
 
                 <div class="display_menu_list">
-                    <!--메뉴 리스트 시작-->
-                    <ul class="menu_list">
-                        <li class="menu_box">
-                            <span class="menu" style="max-width: 280px;">[오늘의 추천]</span>
-                        </li>
 
-                        <li class="menu_box">
-                            <span class="menu" style="max-width: 280px;">LG사운드바 후원관</span>
-                        </li>
-
-                        <li class="menu_box">
-                            <span class="menu" style="max-width: 280px;">소셜랭킹 방송</span>
-                        </li>
-
-                        <li class="menu_box">
-                            <span class="menu" style="max-width: 220px;">영화</span>
-                        </li>
-
-                        <li class="menu_box">
-                            <span class="menu" style="max-width: 280px;">SBS</span>
-                        </li>
-
-                        <li class="menu_box">
-                            <span class="menu" style="max-width: 280px;">MBC</span>
-                        </li>
-
-                        <li class="menu_box">
-                            <span class="menu" style="max-width: 280px;">KBS</span>
-                        </li>
-
-                        <li class="menu_box focus">
-                            <span class="menu" style="max-width: 280px;">CJ E&amp;M</span>
-                        </li>
-
-                        <li class="menu_box">
-                            <span class="menu" style="max-width: 280px;">키즈&amp;어린이</span>
-                        </li>
-                    </ul>
-                </div>
+                	<!-- 메뉴 리스트 시작 -->
+                	</div>
                 <!--메뉴 리스트 끝 -->
 
                 <div class="list_bt_area_all_2" style="height: 85px;">
@@ -75,33 +199,13 @@
         <div class="bg_right" style="display: block;"><!-- bg_right (검은 배경)-->
             <div class="bg_submenu" id="previewList">
                 <!--서브 메뉴 리스트 영역 시작-->
-                <ul class="submenu_list">
-
-                    <li>CJ E&amp;M 무제한 이용권</li>
-
-                    <li>실시간 인기순위</li>
-
-                    <li>방금 놓친 CJ E&amp;M</li>
-
-                    <li>tvN</li>
-
-                    <li>Mnet</li>
-
-                    <li>온스타일</li>
-
-                    <li>XTM</li>
-
-                    <li>Olive</li>
-
-                    <li>스토리온</li>
-
-                </ul>
             </div>
             <!--서브 메뉴 리스트 영역 끝 -->
         </div>
         <!-- bg_right -->
     </div>
     <!-- //중앙정렬 전체 프레임 끝 --></div>
+
 
 </body>
 </html>
