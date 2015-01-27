@@ -7,11 +7,13 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="css/main.css"/>
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
-<script type="text/javascript" src="C:/Users/castis/Desktop/WebDevQuest-master/getList.js"></script>
+<script type="text/javascript" src="getList.js"></script>
 <script type="text/javascript">
 window.onload=function(){
-	 display_menu_view("0", "menu");
-	 display_menu_view(current_cId, "preview");
+	depth=0;
+	getLeftMenuList("0");
+	showLeftMenu(depth);
+// 	showPreviewList(current_cId);
 };
 
 // 키보드 누르면
