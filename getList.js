@@ -16,7 +16,7 @@ var jsonObj;
 var index=[];
 
 function loadJSON(param){
-	 return $.ajax({
+	return $.ajax({
 	    url : path + param,
 	    dataType : "json",
 	    type : "post",
@@ -24,8 +24,7 @@ function loadJSON(param){
 	    error:function(request,status,error){
 	        alert("code:"+request.status+"\n"+"error:"+error);
 	    }
-	}).responseText;
-
+	}).responseText; 
 }
 
 // 객체 가져오기
@@ -36,117 +35,182 @@ function getLeftMenuList(id){
 	 for (var i=1; i<jsonObj.length; i++){
 		 menu.push(jsonObj[i]);
 		}
-	 if (depth==1){
+	 if (depth == 1){
 		 index[depth]={firstIndex:0, lastIndex:menu.length-1, currentIndex:0};
 	 } else if (depth > 1){
-		 index[depth]={firstIndex:(index[depth-1].lastIndex)+1, lastIndex:menu.legnth-1, currentIndex:0};
+		 index[depth]={firstIndex:(index[depth-1].lastIndex)+1, lastIndex:menu.length-1, currentIndex:(index[depth-1].lastIndex)+1};
 	 }
 }
 
 //왼쪽 메뉴 출력	
-function showLeftMenu(depth){
-	var startIdx=index[depth].firstIndex;
-	var endIdx=index[depth].lastIndex;
-	var currentIdx=index[depth].currentIndex;
-//	if (0 <= currentIndex && currentIndex < 9){
+function showLeftMenu(depth, keyCode){
 	
-		output='<ul class="menu_list">'; 
-		for (var i=0; i<9 ; i++){ 
-			output+='<li class="menu_box">'; 
-			output+='<span class="menu" style="max-width: 280px;">'; 
-			output+=menu[i].categoryName+'</span>'; 
-			output+='</li>'; 
+	var startIdx = index[depth].firstIndex;
+	var endIdx = index[depth].lastIndex;
+	var currentIdx = index[depth].currentIndex;
+	console.log('depth:'+depth)
+	console.log('startIdx:'+index[depth].firstIndex);
+	console.log('endIdx:'+index[depth].lastIndex);
+	console.log('currentIdx:'+index[depth].currentIndex);
+	
+	if ( ( endIdx - startIdx ) <= 8 ) {
+		output = '<ul class="menu_list">'; 
+		for (var i = startIdx; i < endIdx ; i++){ 
+			output += '<li class="menu_box">'; 
+			output += '<span class="menu" style="max-width: 280px;">'; 
+			output += menu[i].categoryName+'</span>'; 
+			output += '</li>'; 
 		} 
-//	}
+		
+	} else if ( ( endIdx - startIdx ) > 8 ) {
+		
+		if ( keyCode == null ){ //초기값
+			current_cId=menu[currentIdx].categoryId;
+			output='<ul class="menu_list">'; 
+			for (var i = startIdx; i < startIdx + 9 ; i++){ 
+				output+='<li class="menu_box">'; 
+				output+='<span class="menu" style="max-width: 280px;">'; 
+				output+=menu[i].categoryName+'</span>'; 
+				output+='</li>'; 
+			} 
+			
+		} else if ( keyCode == 40 ){
+			
+			if ( startIdx <= currentIdx && currentIdx < ( startIdx + 9 ) ) {
+				output='<ul class="menu_list">'; 
+				for (var i = startIdx; i < startIdx + 9 ; i++){ 
+					output+='<li class="menu_box">'; 
+					output+='<span class="menu" style="max-width: 280px;">'; 
+					output+=menu[i].categoryName+'</span>'; 
+					output+='</li>'; 
+				} 
+				
+			} else {
+				output='<ul class="menu_list">'; 
+				for (var i = currentIdx - 8 ; i < currentIdx + 1 ; i++) { 
+					output+='<li class="menu_box">'; 
+					output+='<span class="menu" style="max-width: 280px;">'; 
+					output+=menu[i].categoryName+'</span>'; 
+					output+='</li>'; 
+				} 
+			} 
+			
+		} else if ( keyCode == 38 ){
+			if ( endIdx - 8 < currentIdx && currentIdx <= endIdx ) {
+				output='<ul class="menu_list">'; 
+				for (var i = endIdx - 8; i < endIdx + 1 ; i++){ 
+					output+='<li class="menu_box">'; 
+					output+='<span class="menu" style="max-width: 280px;">'; 
+					output+=menu[i].categoryName+'</span>'; 
+					output+='</li>'; 
+				} 
+			} else {
+				output='<ul class="menu_list">'; 
+				for (var i = currentIdx ; i < currentIdx +9 ; i++){ 
+					output+='<li class="menu_box">'; 
+					output+='<span class="menu" style="max-width: 280px;">'; 
+					output+=menu[i].categoryName+'</span>'; 
+					output+='</li>'; 
+				} 
+				
+			}
+		} else if ( keyCode == 13 || keyCode == 39 ) {
+			
+			current_cId=menu[currentIdx].categoryId;
+			output='<ul class="menu_list">'; 
+			for (var i = startIdx; i < startIdx + 9 ; i++){ 
+				output+='<li class="menu_box">'; 
+				output+='<span class="menu" style="max-width: 280px;">'; 
+				output+=menu[i].categoryName+'</span>'; 
+				output+='</li>'; 
+			} 
+		} 
+		
+	}
 	output+='</ul>'; 
 	$(".display_menu_list").html(output); 
-	if (currentIdx==startIdx){
+	if (currentIdx == startIdx){
 		$(".menu_list li").eq(index[depth].currentIndex).attr("class", "menu_box focus");
-//		current_cId = menu[index[depth].currentIndex].categoryId; 
+		
 	}
-//	currentIndex = 0; //현재 인덱스 값 ; 디폴트 0 
-//	cancel_id = menu[0].parentCategoryId; 
-	
-//	lastIndex = menu.length -1; //마지막 인덱스 값 
 
 }
 
-//서브메뉴(미리보기) 리스트 생성 - textList로 넘어가는 객체 구분자가 뭘까? Leaf! 
-// 왜 멈추지..
-//function showPreviewList(id){
-//	console.log(id);
-//		param="&categoryId="+id+"&depth=2";
-//		jsonObj=JSON.parse(loadJSON(param)).categoryList;
-//		sub_output='<ul class="submenu_list">';
-//		for (i=1; i<jsonObj.length; i++){
-//			jsonObj+='<li>'+jsonObj[i].categoryName+'</li>';
-//		}
-//		sub_output+='</ul>';
-//		console.
-//		$("#previewList").html(sub_output);
-//}
-
+//서브메뉴(미리보기) 리스트 생성 - textList로 넘어가는-> Leaf! 
+function showPreviewList(id){
+	console.log(id);
+	param="&categoryId="+id+"&depth=2";
+	jsonObj=JSON.parse(loadJSON(param)).categoryList;
+		sub_output='<ul class="submenu_list">';
+		for (i=1; i<jsonObj.length; i++){
+			sub_output+='<li>'+jsonObj[i].categoryName+'</li>';
+		}
+		sub_output+='</ul>';
+		$("#previewList").html(sub_output);
+}
 
 // 키보드 이벤트
 function pressKeyboard(keyCode){
 	// 하 키
 	if (keyCode == 40){ 
 		console.log(index[depth].currentIndex);
-	 	if (index[depth].currentIndex >= index[depth].lastIndex - 1){ 
-	 		$(".menu_list li").eq(index[depth].currentIndex).attr("class", "menu_box");
+		if (index[depth].currentIndex >= index[depth].lastIndex){
+			
+			index[depth].currentIndex = index[depth].firstIndex;
+			showLeftMenu(depth, keyCode);
 			$(".menu_list li").eq(0).attr("class", "menu_box focus");
-			index[depth].currentIndex = 0;
-			current_cId=menu[0].categoryId;
-			showLeftMenu(depth);
-	 	} else if (index[depth].firstIndex <= index[depth].currentIndex &&
-	 			index[depth].firstIndex + 9 > index[depth].currentIndex){ // 0~8까지 
-	 		$(".menu_list li").eq(index[depth].currentIndex).attr("class", "menu_box");
-	 		$(".menu_list li").eq(index[depth].currentIndex+1).attr("class", "menu_box focus");
-	 		index[depth].currentIndex++;
-	 		current_cId = menu[index[depth].currentIndex].categoryId;
-	 	}
-//	 	showPreviewList(current_cId);
+		
+		} else if (index[depth].currentIndex - index[depth].firstIndex >= 8){
+			
+			++ index[depth].currentIndex;
+			showLeftMenu(depth, keyCode);
+			$(".menu_list li").eq(8).attr("class", "menu_box focus");
+		} else {
+			console.log('3번');
+			++ index[depth].currentIndex;
+			$(".menu_list li").eq(index[depth].currentIndex - index[depth].firstIndex -1).attr("class", "menu_box");
+	 		$(".menu_list li").eq(index[depth].currentIndex - index[depth].firstIndex).attr("class", "menu_box focus");
+	
+		}
+		current_cId = menu[index[depth].currentIndex].categoryId; 
+		console.log(current_cId);
+		showPreviewList(current_cId);
+		
 	// 상 키
 	} else if (keyCode == 38){ 
+		console.log(index[depth].currentIndex);
 		// 현재 포커스가 맨 처음 항목에 위치
-		if (currentIndex <= 0){ 
-			$(".menu_list li").eq(currentIndex).attr("class", "menu_box");
-			$(".menu_list li").eq(lastIndex - 1).attr("class", "menu_box focus");
-	 		currentIndex = lastIndex - 1;
-	 		current_cId = menu[currentIndex + 1].categoryId;
+		if (index[depth].currentIndex <= index[depth].firstIndex){ 
+			index[depth].currentIndex = index[depth].lastIndex;
+			showLeftMenu(depth, keyCode);
+			$(".menu_list li").eq(8).attr("class", "menu_box focus");
 	 		
-		} else{ // 그 외
-			$(".menu_list li").eq(currentIndex).attr("class", "menu_box");
-			$(".menu_list li").eq(currentIndex - 1).attr("class", "menu_box focus");
-			currentIndex = currentIndex - 1;
-			current_cId = menu[currentIndex + 1].categoryId;
+		} else if ( index[depth].currentIndex - (index[depth].lastIndex-8) <= 0){
+			console.log('2번');
+			--index[depth].currentIndex;
+			showLeftMenu(depth, keyCode);
+			$(".menu_list li").eq(0).attr("class", "menu_box focus");
+
+		} else if ( 0 < (index[depth].currentIndex - (index[depth].lastIndex-8 )) &&
+				(index[depth].currentIndex - (index[depth].lastIndex-8 ) <= 8)){
+			console.log('3번');
+			--index[depth].currentIndex;
+			$(".menu_list li").eq(index[depth].currentIndex+1 - (index[depth].lastIndex-8)).attr("class", "menu_box");
+			$(".menu_list li").eq(index[depth].currentIndex - (index[depth].lastIndex-8)).attr("class", "menu_box focus");
 		}
-//		display_menu_view(current_cId, "preview");
+		current_cId = menu[index[depth].currentIndex].categoryId; 
+		showPreviewList(current_cId);
 		
 		// 엔터키 or 우키
 	} else if (keyCode == 13 || keyCode == 39){ 
-		current_cId = menu[currentIndex + 1].categoryId;
-		// 서브 컨텐츠 영역 없는 메뉴일 때 
-		for (var i = menu.length; i >= 0; i--) { // 포인터 관련 배열 초기화
-			menu.remove(i);
-		}
-		for (var i = sub_menu.length; i >= 0 ; i--){
-			sub_menu.remove(i);
-		}
-		display_menu_view(current_cId, "menu");
-		display_menu_view(current_cId, "preview");
+		getLeftMenuList(current_cId);
+		showLeftMenu(depth, keyCode);
+		showPreviewList(current_cId);
 		
 	} else if (keyCode == 8 || keyCode == 37){ // 백스페이스 or 좌키 : 이전으로 이동
-		current_cId = menu[currentIndex + 1].categoryId;
-		for (var i = menu.length; i >= 0; i--) { // 포인터 관련 배열 초기화
-			menu.remove(i);
-		}
-		for (var i = sub_menu.length; i >= 0 ; i--){
-			sub_menu.remove(i);
-		}
+		--depth;
+		showLeftMenu(depth, keyCode);
 		
-		display_menu_view(cancel_id, "menu");
-		display_menu_view(current_cId, "preview");
 	}
 }
 
