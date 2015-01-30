@@ -6,7 +6,7 @@ var output; // display_menu 출력부
 var sub_output; //sub_menu(preview) 출력부
 var current_cId; //현재 해당 categoryId
 // 하스 url
-var path="http://softstb.cjhellovision.com:8080/HApplicationServer/getCategoryTree.json?version=1&terminalKey=25C5C02283A06C80B1F18FCAB3C36D62";
+var path="http://softstb.cjhellovision.com:8080/HApplicationServer/getCategoryTree.json?version=1&terminalKey=25C5C02283A06C80B1F18FCAB3C36D62&categoryProfile=4";
 var param; // 필요한 categoryList 뽑기 위한 파라미터
 var menu=[]; //왼쪽 메뉴 리스트 저장
 var sub_menu=[]; // 미리보기 리스트 저장
@@ -16,9 +16,24 @@ var jsonObj;
 var index=[];
 var x; // 화면에 나타나는 리스트(9개)의 인덱스
 
+var pathForTextList="http://softstb.cjhellovision.com:8080/HApplicationServer/getAssetList.json?version=1&terminalKey=25C5C02283A06C80B1F18FCAB3C36D62&assetProfile=8&pageSize=10";
+
+
 function loadJSON(param){
 	return $.ajax({
 	    url : path + param,
+	    dataType : "json",
+	    type : "post",
+	    async: false, //동기: false, 비동기: true
+	    error:function(request,status,error){
+	        alert("code:"+request.status+"\n"+"error:"+error);
+	    }
+	}).responseText; 
+}
+
+function loadJSONForTextList(param){
+	return $.ajax({
+	    url : pathForTextList + param,
 	    dataType : "json",
 	    type : "post",
 	    async: false, //동기: false, 비동기: true
@@ -53,6 +68,9 @@ function showLeftMenu(depth, keyCode){
 		current_cId=menu[currentIdx].categoryId;
 		output = '<ul class="menu_list">'; 
 		for (var i = startIdx; i < endIdx + 1 ; i++){ 
+			currentIdx=startIdx;
+			current_cId=menu[currentIdx].categoryId;
+			x=0;
 			output += '<li class="menu_box">'; 
 			output += '<span class="menu" style="max-width: 280px;">'; 
 			output += menu[i].categoryName+'</span>'; 
@@ -60,6 +78,7 @@ function showLeftMenu(depth, keyCode){
 		} 
 		output+='</ul>'; 
 		$(".display_menu_list").html(output); 
+		$(".menu_list li").eq(0).attr("class", "menu_box focus");
 	} else if ( ( endIdx - startIdx ) > 8 ) {
 		if ( keyCode == null || keyCode == 13 || keyCode == 39){
 			currentIdx=startIdx;
@@ -123,28 +142,69 @@ function showLeftMenu(depth, keyCode){
 			}
 		}
 	}
-	
-//	output+='</ul>'; 
-//	$(".display_menu_list").html(output); 
-//	if (keyCode == null){
-//		$(".menu_list li").eq(0).attr("class", "menu_box focus");
-//		
-//	}
+
 
 }
 
-//서브메뉴(미리보기) 리스트 생성 - textList로 넘어가는-> Leaf! 
+//서브메뉴(미리보기) 리스트 생성 - textList로 넘어가는-> Leaf
 function showPreviewList(id){
-	console.log(id);
-	param="&categoryId="+id+"&depth=2";
-	jsonObj=JSON.parse(loadJSON(param)).categoryList;
-		sub_output='<ul class="submenu_list">';
+	
+	if (menu[index[depth].currentIndex].leaf===true){ // 컨텐츠
+		
+		param="&categoryId="+id;
+		jsonObj=JSON.parse(loadJSONForTextList(param)).assetList;
+		console.log(jsonObj[1].title);
+		
+//		var content= document.querySelector('link[rel="import"]').import;
+//		var bg_submenu=content.querySelector('.bg_submenu');
+//		console.log(content);
+//		var bg_submenu_list ='<ul class="submenu_list>';
+//		for (i=1; i<jsonObj.length; i++){
+//			bg_submenu_list+='<li class="submenu_box">';
+//			bg_submenu_list+='<span class="submenu_text">';
+//			bg_submenu_list+='<span class="rank_title02">';
+//			bg_submenu_list+=jsonObj[i].title;
+//			bg_submenu_list+='</span><span class="won"></span></span></li>';
+//		}
+//
+//		bg_submenu_list+='</ul></div>';
+//		$('.bg_right').html(bg_submenu);
+//		$('bg_submenu').appendChild(bg_submenu_list);
+		
+		
+		sub_output='<div class="bg_submenu_list" id="contentGroupList">';
+		sub_output+='<div class="list_bt_area01_right_top">';
+		sub_output+='<span class="arr_up_right" style="display: block;"></span></div>';
+		sub_output+='<div class="bg_submenu">';
+		sub_output+='<ul class="submenu_list>';
+		for (i=1; i<jsonObj.length; i++){
+			sub_output+='<li class="submenu_box">';
+			sub_output+='<span class="submenu_text">';
+			sub_output+='<span class="rank_title02">';
+			sub_output+=jsonObj[i].title;
+			sub_output+='</span><span class="won"></span></span></li>'
+		}
+
+		sub_output+='</ul></div>';
+		
+		$(".bg_right").html(sub_output);
+
+	} else { // 미리보기
+		param="&categoryId="+id+"&depth=2";
+		jsonObj=JSON.parse(loadJSON(param)).categoryList;
+		
+		sub_output='<div class="bg_submenu" id="previewList">';
+		sub_output+='<ul class="submenu_list">';
+		
 		for (i=1; i<jsonObj.length; i++){
 			sub_output+='<li>'+jsonObj[i].categoryName+'</li>';
 		}
-		sub_output+='</ul>';
-		$("#previewList").html(sub_output);
+		sub_output+='</ul></div>';
+		$(".bg_right").html(sub_output);
+		
+	}
 }
+
 
 // 키보드 이벤트
 function pressKeyboard(keyCode){
@@ -155,7 +215,6 @@ function pressKeyboard(keyCode){
 		
 		// 최하위 항목일 때
 		if (index[depth].currentIndex >= index[depth].lastIndex){
-			console.log('1번');
 			index[depth].currentIndex = index[depth].firstIndex;
 			showLeftMenu(depth, keyCode);
 			$(".menu_list li").eq(0).attr("class", "menu_box focus");
@@ -163,7 +222,6 @@ function pressKeyboard(keyCode){
 		
 		// 포커스 한 칸 아래로 이동
 		} else if (0 <= x && x < 8) {
-			console.log('2번');
 			++index[depth].currentIndex;
 			$(".menu_list li").eq(x).attr("class", "menu_box");
 			$(".menu_list li").eq(x+1).attr("class", "menu_box focus");
@@ -171,7 +229,6 @@ function pressKeyboard(keyCode){
 			
 		// 포커스가 제일 아래에 있어 한 칸씩 밀어야 할 때
 		} else if ( x == 8 ){
-			console.log('3번');
 			++index[depth].currentIndex;
 			showLeftMenu(depth, keyCode);
 			$(".menu_list li").eq(8).attr("class", "menu_box focus");
@@ -216,17 +273,22 @@ function pressKeyboard(keyCode){
 		showPreviewList(current_cId);
 		
 	} else if (keyCode == 8 || keyCode == 37){ // 백스페이스 or 좌키 : 이전으로 이동
-		for (i=index[depth].lastIndex; i>index[depth].firstIndex-1; i--){
-			menu.remove(i);
+		
+		if (depth > 1){
+			for (i=index[depth].lastIndex; i>index[depth].firstIndex-1; i--){
+			
+				menu.remove(i);
+			}
+			
+			--depth;
+			output=index[depth].output;
+			x=index[depth].x;
+			$(".display_menu_list").html(output); 
+			$(".menu_list li").eq(x).attr("class", "menu_box focus");
+			current_cId=menu[index[depth].currentIndex].categoryId;
+			showPreviewList(current_cId);
+		
 		}
-		--depth;
-		output=index[depth].output;
-		x=index[depth].x;
-		console.log(output);
-		$(".display_menu_list").html(output); 
-		$(".menu_list li").eq(x).attr("class", "menu_box focus");
-		current_cId=menu[index[depth].currentIndex].categoryId;
-		showPreviewList(current_cId);
 	}
 }
 
