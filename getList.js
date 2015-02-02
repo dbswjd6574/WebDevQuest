@@ -1,23 +1,22 @@
 // 변수선언
-Array.prototype.remove = function (index) {this.splice(index, 1); } //left_arr 초기화 시키기 위한 remove();
+Array.prototype.remove = function (index) {this.splice(index, 1); } // left_arr 초기화 시키기 위한 remove();
 var currentIndex=0; // 메뉴 현재 인덱스 값
-var lastIndex; //메뉴 리스트의 마지막 인덱스 값
+var lastIndex; // 메뉴 리스트의 마지막 인덱스 값
 var output; // display_menu 출력부
-var sub_output; //sub_menu(preview) 출력부
-var current_cId; //현재 해당 categoryId
+var sub_output; // preview 출력부
+var current_cId; // 현재 해당 categoryId
 // 하스 url
 var path="http://softstb.cjhellovision.com:8080/HApplicationServer/getCategoryTree.json?version=1&terminalKey=25C5C02283A06C80B1F18FCAB3C36D62&categoryProfile=4";
 var param; // 필요한 categoryList 뽑기 위한 파라미터
 var menu=[]; //왼쪽 메뉴 리스트 저장
-var sub_menu=[]; // 미리보기 리스트 저장
 var cancel_id; // 이전메뉴로 돌아갈 때 필요한 parentCategoryId
-var index=[];
+var index=[]; // depth별 인덱스 저장
 var jsonObj;
-var index=[];
-var x; // 화면에 나타나는 리스트(9개)의 인덱스
-
-var pathForTextList="http://softstb.cjhellovision.com:8080/HApplicationServer/getAssetList.json?version=1&terminalKey=25C5C02283A06C80B1F18FCAB3C36D62&assetProfile=8&pageSize=10";
-
+var x; // 왼쪽 메뉴에 나타나는 리스트(9개)의 인덱스
+var y; // 오른쪽 textList의 인덱스
+//assetList url
+var pathForTextList="http://softstb.cjhellovision.com:8080/HApplicationServer/getAssetList.json?version=1&terminalKey=25C5C02283A06C80B1F18FCAB3C36D62&assetProfile=8&pageSize=9";
+var focusIdx=0; // 포커스 왼쪽에 위치&오른쪽 미리보기=0; 포커스 왼쪽&오른쪽 TextList=1; 포커스 오른쪽=2
 
 function loadJSON(param){
 	return $.ajax({
@@ -150,34 +149,18 @@ function showLeftMenu(depth, keyCode){
 function showPreviewList(id){
 	
 	if (menu[index[depth].currentIndex].leaf===true){ // 컨텐츠
-		
+		focusIdx=1;
 		param="&categoryId="+id;
 		jsonObj=JSON.parse(loadJSONForTextList(param)).assetList;
-		console.log(jsonObj[1].title);
+	
+		$("#previewList").hide();
+		$(".bg_submenu_poster").show();
+
+		$("#contentGroupList").show();
 		
-//		var content= document.querySelector('link[rel="import"]').import;
-//		var bg_submenu=content.querySelector('.bg_submenu');
-//		console.log(content);
-//		var bg_submenu_list ='<ul class="submenu_list>';
-//		for (i=1; i<jsonObj.length; i++){
-//			bg_submenu_list+='<li class="submenu_box">';
-//			bg_submenu_list+='<span class="submenu_text">';
-//			bg_submenu_list+='<span class="rank_title02">';
-//			bg_submenu_list+=jsonObj[i].title;
-//			bg_submenu_list+='</span><span class="won"></span></span></li>';
-//		}
-//
-//		bg_submenu_list+='</ul></div>';
-//		$('.bg_right').html(bg_submenu);
-//		$('bg_submenu').appendChild(bg_submenu_list);
+		sub_output='<ul class="submenu_list>';
 		
-		
-		sub_output='<div class="bg_submenu_list" id="contentGroupList">';
-		sub_output+='<div class="list_bt_area01_right_top">';
-		sub_output+='<span class="arr_up_right" style="display: block;"></span></div>';
-		sub_output+='<div class="bg_submenu">';
-		sub_output+='<ul class="submenu_list>';
-		for (i=1; i<jsonObj.length; i++){
+		for (i=0; i<jsonObj.length; i++){
 			sub_output+='<li class="submenu_box">';
 			sub_output+='<span class="submenu_text">';
 			sub_output+='<span class="rank_title02">';
@@ -185,22 +168,29 @@ function showPreviewList(id){
 			sub_output+='</span><span class="won"></span></span></li>'
 		}
 
-		sub_output+='</ul></div>';
+		sub_output+='</ul>';
+		$(".bg_submenu").html(sub_output);
+//		$(".text").html(jsonObj[0].synopsis);
+//		$("img").attr("src", jsonObj[0].imageFileName);
 		
-		$(".bg_right").html(sub_output);
+		
+		
 
 	} else { // 미리보기
+		focusIdx=0;
 		param="&categoryId="+id+"&depth=2";
 		jsonObj=JSON.parse(loadJSON(param)).categoryList;
+		$("#contentGroupList").hide();
+		$(".bg_submenu_poster").hide();
+		$("#previewList").show();
 		
-		sub_output='<div class="bg_submenu" id="previewList">';
-		sub_output+='<ul class="submenu_list">';
-		
+		sub_output='<ul class="submenu_list">';
 		for (i=1; i<jsonObj.length; i++){
 			sub_output+='<li>'+jsonObj[i].categoryName+'</li>';
 		}
-		sub_output+='</ul></div>';
-		$(".bg_right").html(sub_output);
+		sub_output+='</ul>';
+		
+		$("#previewList").html(sub_output);
 		
 	}
 }
@@ -208,87 +198,119 @@ function showPreviewList(id){
 
 // 키보드 이벤트
 function pressKeyboard(keyCode){
+	console.log(focusIdx);
 	// 하 키
 	if (keyCode == 40){ 
 		console.log('x는:'+x);
 		console.log('현재인덱스:'+index[depth].currentIndex);
-		
-		// 최하위 항목일 때
-		if (index[depth].currentIndex >= index[depth].lastIndex){
-			index[depth].currentIndex = index[depth].firstIndex;
-			showLeftMenu(depth, keyCode);
-			$(".menu_list li").eq(0).attr("class", "menu_box focus");
-			x=0;
-		
-		// 포커스 한 칸 아래로 이동
-		} else if (0 <= x && x < 8) {
-			++index[depth].currentIndex;
-			$(".menu_list li").eq(x).attr("class", "menu_box");
-			$(".menu_list li").eq(x+1).attr("class", "menu_box focus");
-			++x;
+		// 왼쪽 메뉴
+		if ( focusIdx == 0 || focusIdx == 1 ){
 			
-		// 포커스가 제일 아래에 있어 한 칸씩 밀어야 할 때
-		} else if ( x == 8 ){
-			++index[depth].currentIndex;
-			showLeftMenu(depth, keyCode);
-			$(".menu_list li").eq(8).attr("class", "menu_box focus");
-			x=8;
+			// 최하위 항목일 때
+			if (index[depth].currentIndex >= index[depth].lastIndex){
+				index[depth].currentIndex = index[depth].firstIndex;
+				showLeftMenu(depth, keyCode);
+				$(".menu_list li").eq(0).attr("class", "menu_box focus");
+				x=0;
+			
+			// 포커스 한 칸 아래로 이동
+			} else if (0 <= x && x < 8) {
+				++index[depth].currentIndex;
+				$(".menu_list li").eq(x).attr("class", "menu_box");
+				$(".menu_list li").eq(x+1).attr("class", "menu_box focus");
+				++x;
+				
+			// 포커스가 제일 아래에 있어 한 칸씩 밀어야 할 때
+			} else if ( x == 8 ){
+				++index[depth].currentIndex;
+				showLeftMenu(depth, keyCode);
+				$(".menu_list li").eq(8).attr("class", "menu_box focus");
+				x=8;
+			}
+			current_cId = menu[index[depth].currentIndex].categoryId; 
+			showPreviewList(current_cId);
+			
+		// TextList
+		} else if (focusIdx == 2 ){
+			
 		}
-		current_cId = menu[index[depth].currentIndex].categoryId; 
-		showPreviewList(current_cId);
 		
 	// 상 키
 	} else if (keyCode == 38){ 
 		
-		// 최상위 항목일 때
-		if (index[depth].currentIndex <= index[depth].firstIndex){ 
-			index[depth].currentIndex = index[depth].lastIndex;
-			showLeftMenu(depth, keyCode);
-			$(".menu_list li").eq(8).attr("class", "menu_box focus");
-			x=8;
+		// 왼쪽 메뉴
+		if ( focusIdx == 0 || focusIdx == 1 ) {
+			// 최상위 항목일 때
+			if (index[depth].currentIndex <= index[depth].firstIndex){ 
+				index[depth].currentIndex = index[depth].lastIndex;
+				showLeftMenu(depth, keyCode);
+				$(".menu_list li").eq(8).attr("class", "menu_box focus");
+				x=8;
+				
+			// 포커스 한 칸 위로 이동
+			} else if (0 < x && x <= 8) {
+				--index[depth].currentIndex;
+				$(".menu_list li").eq(x).attr("class", "menu_box");
+				$(".menu_list li").eq(x-1).attr("class", "menu_box focus");
+				--x;
+				
+			// 포커스가 제일 위에 있어 한 칸 위로 밀어야 할 때
+			} else if ( x == 0 ){
+				--index[depth].currentIndex;
+				showLeftMenu(depth, keyCode);
+				$(".menu_list li").eq(0).attr("class", "menu_box focus");
+				x=0;
+			}
+			current_cId = menu[index[depth].currentIndex].categoryId; 
+			showPreviewList(current_cId);
 			
-		// 포커스 한 칸 위로 이동
-		} else if (0 < x && x <= 8) {
-			--index[depth].currentIndex;
-			$(".menu_list li").eq(x).attr("class", "menu_box");
-			$(".menu_list li").eq(x-1).attr("class", "menu_box focus");
-			--x;
+		// TextList
+		} else if ( focusIdx == 2 ){
 			
-		// 포커스가 제일 위에 있어 한 칸 위로 밀어야 할 때
-		} else if ( x == 0){
-			--index[depth].currentIndex;
-			showLeftMenu(depth, keyCode);
-			$(".menu_list li").eq(0).attr("class", "menu_box focus");
-			x=0;
 		}
-		current_cId = menu[index[depth].currentIndex].categoryId; 
-		showPreviewList(current_cId);
+		
 		
 		// 엔터키 or 우키
 	} else if (keyCode == 13 || keyCode == 39){ 
-		index[depth].x=x;
-		index[depth].output=output;
-		getLeftMenuList(current_cId);
-		showLeftMenu(depth, keyCode);
-		showPreviewList(current_cId);
+		// 왼쪽 메뉴
+		if ( focusIdx == 0 ){
+			index[depth].x=x;
+			index[depth].output=output;
+			getLeftMenuList(current_cId);
+			showLeftMenu(depth, keyCode);
+			showPreviewList(current_cId);
+			
+		// TextList
+		} else if ( focusIdx == 1 ){
+			$(".bg_left focus").attr("class", "bg_left");
+			$(".bg_right").attr("class", "bg_right focus");
+			$(".submenu_list li").eq(0).attr("class", "submenu_box focus");
+			y=0;
+			focusIdx=2;
+		}
+		
 		
 	} else if (keyCode == 8 || keyCode == 37){ // 백스페이스 or 좌키 : 이전으로 이동
 		
-		if (depth > 1){
-			for (i=index[depth].lastIndex; i>index[depth].firstIndex-1; i--){
-			
-				menu.remove(i);
+		if ( focusIdx == 0 || focusIdx == 1 ){
+			if (depth > 1){
+				for (i=index[depth].lastIndex; i>index[depth].firstIndex-1; i--){
+					menu.remove(i);
+				}
+				--depth;
+				output=index[depth].output;
+				x=index[depth].x;
+				$(".display_menu_list").html(output); 
+				$(".menu_list li").eq(x).attr("class", "menu_box focus");
+				current_cId=menu[index[depth].currentIndex].categoryId;
+				showPreviewList(current_cId);
 			}
-			
-			--depth;
-			output=index[depth].output;
-			x=index[depth].x;
-			$(".display_menu_list").html(output); 
-			$(".menu_list li").eq(x).attr("class", "menu_box focus");
-			current_cId=menu[index[depth].currentIndex].categoryId;
-			showPreviewList(current_cId);
-		
+		} else if (focusIdx == 2){
+			focusIdx = 1;
+			$(".bg_left").attr("class", "bg_left focus");
+			$(".bg_right focus").attr("class", "bg_right");
 		}
+		
 	}
 }
 
