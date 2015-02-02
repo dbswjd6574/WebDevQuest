@@ -1,72 +1,131 @@
-
-
-
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="css/main.css"/>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="css/main.css" />
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
 <script type="text/javascript" src="getList.js"></script>
 <script type="text/javascript">
-window.onload=function(){
-	depth=0;
-	getLeftMenuList("0");
-	showLeftMenu(depth, null);
-	showPreviewList(current_cId);
-};
+	window.onload = function() {
+		depth = 0;
+		getLeftMenuList("0");
+		showLeftMenu(depth, null);
+		showPreviewList(current_cId);
 
-// 키보드 누르면
-document.onkeydown=function(e){
-		var theEvent=e?e:window.event;
-		var keyCode=theEvent.keyCode;
+	};
+
+	// 키보드 누르면
+	document.onkeydown = function(e) {
+		var theEvent = e ? e : window.event;
+		var keyCode = theEvent.keyCode;
 		pressKeyboard(keyCode);
-}
-
+	}
 </script>
 </head>
 <body>
-<div class="container" id="categoryListView" style="display: block;">
-    <div id="vod_text">
-        <!-- 중앙정렬 전체 프레임 시작 -->
-        <div class="bg_left focus">
-            <!-- bg_left (검은 배경)-->
-            <div class="bg_mid01">
-                <!-- bg_mid01 시작-->
-                <div class="list_bt_area01">
-                    <span class="bt_left"></span> <span class="bt_text">방송 다시보기</span>
-                    <span class="arr_up"></span>
-                </div>
+	<div class="container" id="categoryListView" style="display: block;">
+		<div id="vod_text">
+			<!-- 중앙정렬 전체 프레임 시작 -->
+			<div class="bg_left focus">
+				<!-- bg_left (검은 배경)-->
+				<div class="bg_mid01">
+					<!-- bg_mid01 시작-->
+					<div class="list_bt_area01">
+						<span class="bt_left"></span>
+						<span class="bt_text">방송 다시보기</span>
+						<span class="arr_up"></span>
+					</div>
 
-                <div class="display_menu_list">
+					<div class="display_menu_list">
 
-                	<!-- 메뉴 리스트 시작 -->
-                	</div>
-                <!--메뉴 리스트 끝 -->
+						<!-- 메뉴 리스트 시작 -->
+					</div>
+					<!--메뉴 리스트 끝 -->
 
-                <div class="list_bt_area_all_2" style="height: 85px;">
-                    <div class="list_bt_area02_2"><span class="list_line_hor_select"></span><span
-                            class="arr_down"></span></div>
-                    <div class="list_bt_area02_3"><span class="area03_text"></span><span
-                            class=""></span></div>
-                </div>
-                <!-- bg_mid01 끝-->
+					<div class="list_bt_area_all_2" style="height: 85px;">
+						<div class="list_bt_area02_2">
+							<span class="list_line_hor_select"></span><span class="arr_down"></span>
+						</div>
+						<div class="list_bt_area02_3">
+							<span class="area03_text"></span><span class=""></span>
+						</div>
+					</div>
+					<!-- bg_mid01 끝-->
 
-            </div>
-            <!-- bg_mid01 끝-->
-            <div class="bg_mid02"></div>
-        </div>
-        <!-- bg_left -->
-        <div class="bg_right" style="display: block;"><!-- bg_right (검은 배경)-->
-            <div class="bg_submenu" id="previewList">
-                <!--서브 메뉴 리스트 영역 시작-->
-            </div>
-            <!--서브 메뉴 리스트 영역 끝 -->
-        </div>
-        <!-- bg_right -->
-    </div>
-    <!-- //중앙정렬 전체 프레임 끝 --></div>
+				</div>
+				<!-- bg_mid01 끝-->
+				<div class="bg_mid02"></div>
+			</div>
+			<!-- bg_left 끝-->
 
+			<!-- 1. 미리보기 영역 -->
+			<div class="bg_right" style="display: block;">
+				<!-- bg_right (검은 배경)-->
+				         <div class="bg_submenu" id="previewList">
+				<!--서브 메뉴 리스트 영역 시작-->
+				            </div>
+				<!--서브 메뉴 리스트 영역 끝 -->
+<!-- 			</div> -->
+
+
+
+
+			<!-- 2. TextList 영역 -->
+<!-- 			<div class="bg_right focus" style="display: block;"> -->
+
+				<div class="bg_submenu_list" id="contentGroupList">
+					<!--서브 메뉴 텍스트 배경 시작-->
+					<div class="list_bt_area01_right_top">
+						<span class="arr_up_right" style="display: block;"></span>
+					</div>
+					<div class="bg_submenu">
+<!-- 						서브 메뉴 리스트 영역 시작 -->
+						<ul class="submenu_list">
+<!-- 							<li class="submenu_box focus"><span class="submenu_text"> -->
+<!-- 									<span class="rank_title02"> 극장동시-마담 뺑덕 </span> <span -->
+<!-- 									class="won"></span> -->
+<!-- 							</span></li> -->
+						</ul>
+					</div>
+					<!--서브 메뉴 리스트 영역 끝 -->
+					<div class="list_bt_area01_right_bottom">
+						<span class="arr_down_right" style="display: block;"></span>
+					</div>
+				</div>
+				<!--서브 메뉴 텍스트 배경 끝-->
+
+				<div class="bg_submenu_poster">
+					<!--서브 메뉴 포스터 영역 시작-->
+					<ul class="submenu_poster">
+						<li class="img">
+							<img src=""
+							onerror=""></li>
+						<li class="icon new" style="display: list-item;"></li>
+					</ul>
+<!-- 					<ul class="submenu_poster_info" style="display: inline-block;"> -->
+<!-- 						<li class="bg_star"><span class="star_on"></span> <span -->
+<!-- 							class="star_on"></span> <span class="star_on"></span> <span -->
+<!-- 							class="star_off"></span> <span class="star_off"></span> <span -->
+<!-- 							class="star_text">6.2</span></li> -->
+<!-- 						<li class="text"></li> -->
+<!-- 					</ul> -->
+				</div>
+				<!--서브 메뉴 포스터 영역 끝-->
+				<div class="display_menu_scroll shower"
+					style="display: none; margin-top: 45px;">
+					<div class="display_menu_scroll_bg"
+						style="height: 550px; background-repeat: repeat-y;"></div>
+					<div class="display_menu_scroll_bar" style="top: -560px;"></div>
+				</div>
+<!-- 			</div> -->
+			<!-- bg_right -->
+			
+			</div>
+
+
+		</div>
+		<!-- //중앙정렬 전체 프레임 끝 -->
+	</div>
 
 </body>
 </html>
