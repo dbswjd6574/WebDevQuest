@@ -15,8 +15,12 @@ var jsonObj;
 var x; // 왼쪽 메뉴에 나타나는 리스트(9개)의 인덱스
 var y; // 오른쪽 textList의 인덱스
 //assetList url
-var pathForTextList="http://softstb.cjhellovision.com:8080/HApplicationServer/getAssetList.json?version=1&terminalKey=25C5C02283A06C80B1F18FCAB3C36D62&assetProfile=8&pageSize=9";
+var pathForTextList="http://softstb.cjhellovision.com:8080/HApplicationServer/getAssetList.json?version=1&terminalKey=25C5C02283A06C80B1F18FCAB3C36D62&assetProfile=8&pageSize=10";
 var focusIdx=0; // 포커스 왼쪽에 위치&오른쪽 미리보기=0; 포커스 왼쪽&오른쪽 TextList=1; 포커스 오른쪽=2
+var pageIdx=0; // textList 현재 페이지
+var totalPage; // textList 총 페이지 수
+var textList=[]; // 
+
 
 function loadJSON(param){
 	return $.ajax({
@@ -105,6 +109,7 @@ function showLeftMenu(depth, keyCode){
 				} 
 				output+='</ul>'; 
 				$(".display_menu_list").html(output); 
+				
 			} else {
 				output = '<ul class="menu_list">'; 
 				for (var i = currentIdx - 8; i < currentIdx + 1; i++){ 
@@ -150,39 +155,38 @@ function showPreviewList(id){
 	
 	if (menu[index[depth].currentIndex].leaf===true){ // 컨텐츠
 		focusIdx=1;
-		param="&categoryId="+id;
+		pageIdx=0;
+		param="&categoryId="+id+"&pageIndex="+pageIdx;
+		totalPage=JSON.parse(loadJSONForTextList(param)).totalPage;
 		jsonObj=JSON.parse(loadJSONForTextList(param)).assetList;
+		console.log('jsonObj길이:'+jsonObj.length);
 	
-		$("#previewList").hide();
-		$(".bg_submenu_poster").show();
+		$("#bg_right_preview").hide();
 
-		$("#contentGroupList").show();
+		$("#bg_right").show();
 		
-		sub_output='<ul class="submenu_list>';
+		sub_output='<ul class="submenu_list">';
 		
 		for (i=0; i<jsonObj.length; i++){
 			sub_output+='<li class="submenu_box">';
 			sub_output+='<span class="submenu_text">';
 			sub_output+='<span class="rank_title02">';
-			sub_output+=jsonObj[i].title;
-			sub_output+='</span><span class="won"></span></span></li>'
+			sub_output+=jsonObj[i].title+'</span><span class="won"></span>';
+			sub_output+='</span></li>';
 		}
 
 		sub_output+='</ul>';
-		$(".bg_submenu").html(sub_output);
-//		$(".text").html(jsonObj[0].synopsis);
+		$("#bg_submenu").html(sub_output);
+		$(".text").html(jsonObj[0].synopsis);
 //		$("img").attr("src", jsonObj[0].imageFileName);
-		
-		
 		
 
 	} else { // 미리보기
 		focusIdx=0;
 		param="&categoryId="+id+"&depth=2";
 		jsonObj=JSON.parse(loadJSON(param)).categoryList;
-		$("#contentGroupList").hide();
-		$(".bg_submenu_poster").hide();
-		$("#previewList").show();
+		$("#bg_right").hide();
+		$("#bg_right_preview").show();
 		
 		sub_output='<ul class="submenu_list">';
 		for (i=1; i<jsonObj.length; i++){
@@ -193,6 +197,31 @@ function showPreviewList(id){
 		$("#previewList").html(sub_output);
 		
 	}
+}
+
+function showNextTextList(id){
+	++pageIdx;
+	console.log(pageIdx);
+	param="&categoryId="+id+"&pageIndex="+pageIdx;
+	jsonObj=JSON.parse(loadJSONForTextList(param)).assetList;
+
+	$("#bg_right_preview").hide();
+	$("#bg_right").show();
+	
+	sub_output='<ul class="submenu_list">';
+	
+	for (i=0; i<jsonObj.length; i++){
+		sub_output+='<li class="submenu_box">';
+		sub_output+='<span class="submenu_text">';
+		sub_output+='<span class="rank_title02">';
+		sub_output+=jsonObj[i].title+'</span><span class="won"></span>';
+		sub_output+='</span></li>';
+	}
+
+	sub_output+='</ul>';
+	$("#bg_submenu").html(sub_output);
+	$(".text").html(jsonObj[0].synopsis);
+//	$("img").attr("src", jsonObj[0].imageFileName);
 }
 
 
@@ -232,7 +261,17 @@ function pressKeyboard(keyCode){
 			
 		// TextList
 		} else if (focusIdx == 2 ){
-			
+			console.log('밑으로내려가기전원래y:'+y);
+			if (0 <= y < jsonObj.length-1){
+				
+				$(".submenu_list li").eq(y).attr("class", "submenu_box");
+				$(".submenu_list li").eq(y+1).attr("class", "submenu_box focus");
+				y=y+1;
+				$(".text").html(jsonObj[y].synopsis);
+//				$("img").attr("src", jsonObj[y].imageFileName);
+			} else if ( y == jsonObj.length-1){
+				showNextTextList(current_cId);
+			}
 		}
 		
 	// 상 키
@@ -266,9 +305,16 @@ function pressKeyboard(keyCode){
 			
 		// TextList
 		} else if ( focusIdx == 2 ){
+			if (0 < y <= jsonObj.length-1){
+				console.log('위로올라가기전원래y:'+y);
+				--y;
+				$(".submenu_list li").eq(y+1).attr("class", "submenu_box");
+				$(".submenu_list li").eq(y).attr("class", "submenu_box focus");
+				$(".text").html(jsonObj[y].synopsis);
+//				$("img").attr("src", jsonObj[y].imageFileName);
+			}
 			
 		}
-		
 		
 		// 엔터키 or 우키
 	} else if (keyCode == 13 || keyCode == 39){ 
@@ -282,13 +328,13 @@ function pressKeyboard(keyCode){
 			
 		// TextList
 		} else if ( focusIdx == 1 ){
-			$(".bg_left focus").attr("class", "bg_left");
-			$(".bg_right").attr("class", "bg_right focus");
-			$(".submenu_list li").eq(0).attr("class", "submenu_box focus");
+			$("#bg_left").attr("class", "bg_left");
+			$("#bg_right").attr("class", "bg_right focus");
+			$(".submenu_box:first").attr("class", "submenu_box focus");
 			y=0;
+			
 			focusIdx=2;
 		}
-		
 		
 	} else if (keyCode == 8 || keyCode == 37){ // 백스페이스 or 좌키 : 이전으로 이동
 		
@@ -307,8 +353,9 @@ function pressKeyboard(keyCode){
 			}
 		} else if (focusIdx == 2){
 			focusIdx = 1;
-			$(".bg_left").attr("class", "bg_left focus");
-			$(".bg_right focus").attr("class", "bg_right");
+			y=0;
+			$("#bg_left").attr("class", "bg_left focus");
+			$("#bg_right").attr("class", "bg_right");
 		}
 		
 	}
