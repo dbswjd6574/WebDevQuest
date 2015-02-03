@@ -11,6 +11,7 @@
 		getLeftMenuList("0");
 		showLeftMenu(depth, null);
 		showPreviewList(current_cId);
+		$("#bg_left").attr("class", "bg_left focus");
 
 	};
 
@@ -26,7 +27,7 @@
 	<div class="container" id="categoryListView" style="display: block;">
 		<div id="vod_text">
 			<!-- 중앙정렬 전체 프레임 시작 -->
-			<div class="bg_left focus">
+			<div class="bg_left" id="bg_left">
 				<!-- bg_left (검은 배경)-->
 				<div class="bg_mid01">
 					<!-- bg_mid01 시작-->
@@ -37,10 +38,8 @@
 					</div>
 
 					<div class="display_menu_list">
-
-						<!-- 메뉴 리스트 시작 -->
+						<!-- 메뉴 리스트  -->
 					</div>
-					<!--메뉴 리스트 끝 -->
 
 					<div class="list_bt_area_all_2" style="height: 85px;">
 						<div class="list_bt_area02_2">
@@ -58,36 +57,29 @@
 			</div>
 			<!-- bg_left 끝-->
 
-			<!-- 1. 미리보기 영역 -->
-			<div class="bg_right" style="display: block;">
+
+			<!-- bg_right -->
+			<div class="bg_right" style="display: block;" id="bg_right_preview">
 				<!-- bg_right (검은 배경)-->
-				         <div class="bg_submenu" id="previewList">
-				<!--서브 메뉴 리스트 영역 시작-->
-				            </div>
-				<!--서브 메뉴 리스트 영역 끝 -->
-<!-- 			</div> -->
+				
+				<!-- 1. 미리보기 영역 -->
+				<div class="bg_submenu" id="previewList">
+					<!--서브 메뉴 리스트 영역 -->
+				</div>
+			</div>
+				
 
-
-
-
-			<!-- 2. TextList 영역 -->
-<!-- 			<div class="bg_right focus" style="display: block;"> -->
-
+				<!-- 2. TextList 영역 -->
+			<div class="bg_right" style="display: block;" id="bg_right">
 				<div class="bg_submenu_list" id="contentGroupList">
 					<!--서브 메뉴 텍스트 배경 시작-->
 					<div class="list_bt_area01_right_top">
 						<span class="arr_up_right" style="display: block;"></span>
 					</div>
-					<div class="bg_submenu">
-<!-- 						서브 메뉴 리스트 영역 시작 -->
-						<ul class="submenu_list">
-<!-- 							<li class="submenu_box focus"><span class="submenu_text"> -->
-<!-- 									<span class="rank_title02"> 극장동시-마담 뺑덕 </span> <span -->
-<!-- 									class="won"></span> -->
-<!-- 							</span></li> -->
-						</ul>
+					<div class="bg_submenu" id="bg_submenu">
+						<!-- 서브 메뉴 리스트 영역  -->
 					</div>
-					<!--서브 메뉴 리스트 영역 끝 -->
+					
 					<div class="list_bt_area01_right_bottom">
 						<span class="arr_down_right" style="display: block;"></span>
 					</div>
@@ -97,18 +89,20 @@
 				<div class="bg_submenu_poster">
 					<!--서브 메뉴 포스터 영역 시작-->
 					<ul class="submenu_poster">
-						<li class="img">
-							<img src=""
-							onerror=""></li>
+						<li class="img"><img src="" onerror=""></li>
 						<li class="icon new" style="display: list-item;"></li>
 					</ul>
-<!-- 					<ul class="submenu_poster_info" style="display: inline-block;"> -->
-<!-- 						<li class="bg_star"><span class="star_on"></span> <span -->
-<!-- 							class="star_on"></span> <span class="star_on"></span> <span -->
-<!-- 							class="star_off"></span> <span class="star_off"></span> <span -->
-<!-- 							class="star_text">6.2</span></li> -->
-<!-- 						<li class="text"></li> -->
-<!-- 					</ul> -->
+					<ul class="submenu_poster_info" style="display: inline-block;">
+						<li class="bg_star">
+<!-- 							<span class="star_on"></span>  -->
+<!-- 							<span class="star_on"></span> -->
+<!-- 							<span class="star_on"></span>  -->
+<!-- 							<span class="star_off"></span> -->
+<!-- 							<span class="star_off"></span> -->
+<!-- 							<span class="star_text">6.2</span> -->
+						</li>
+						<li class="text"></li>
+					</ul>
 				</div>
 				<!--서브 메뉴 포스터 영역 끝-->
 				<div class="display_menu_scroll shower"
@@ -119,9 +113,7 @@
 				</div>
 <!-- 			</div> -->
 			<!-- bg_right -->
-			
 			</div>
-
 
 		</div>
 		<!-- //중앙정렬 전체 프레임 끝 -->
