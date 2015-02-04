@@ -19,7 +19,8 @@ var pathForTextList="http://softstb.cjhellovision.com:8080/HApplicationServer/ge
 var focusIdx=0; // 포커스 왼쪽에 위치&오른쪽 미리보기=0; 포커스 왼쪽&오른쪽 TextList=1; 포커스 오른쪽=2
 var pageIdx=0; // textList 현재 페이지
 var totalPage; // textList 총 페이지 수
-
+var server = "http://softstb.cjhellovision.com:8080/images"; //포스터 이미지에 사용할 주소 앞부분
+var imgName; // 이미지 파일 이름
 function loadJSON(param){
 	return $.ajax({
 	    url : path + param,
@@ -181,7 +182,10 @@ function showRightMenu(id){
 		
 		$("#bg_submenu").html(sub_output);
 		$(".text").html(jsonObj[0].synopsis);
-//		$("img").attr("src", jsonObj[0].imageFileName);
+		
+		var a=jsonObj[0].imageFileName.lastIndexOf("/");
+		imgName=jsonObj[0].imageFileName.substring(a, jsonObj[0].imageFileName.length);
+		$("img").attr("src", server+imgName);
 		
 	// 미리보기
 	} else { 
@@ -238,7 +242,9 @@ function showNextTextList(id, keyCode){
 	sub_output+='</ul>';
 	$("#bg_submenu").html(sub_output);
 	
-//	$("img").attr("src", jsonObj[0].imageFileName);
+	var a=jsonObj[0].imageFileName.lastIndexOf("/");
+	imgName=jsonObj[0].imageFileName.substring(a, jsonObj[0].imageFileName.length);
+	$("img").attr("src", server+imgName);
 }
 
 
@@ -309,7 +315,9 @@ function pressKeyboard(keyCode){
 				$("#submenu_list li").eq(y+1).attr("class", "submenu_box focus");
 				y=y+1;
 				$(".text").html(jsonObj[y].synopsis);
-//				$("img").attr("src", jsonObj[y].imageFileName);
+				var a=jsonObj[y].imageFileName.lastIndexOf("/");
+				imgName=jsonObj[y].imageFileName.substring(a, jsonObj[y].imageFileName.length);
+				$("img").attr("src", server+imgName);
 			// 포커스가 맨 마지막 항목에 있을 때
 			} else if ( y == jsonObj.length-1){
 				// 페이지 = 1일 때 (데이터 로드 필요없음)
@@ -318,12 +326,18 @@ function pressKeyboard(keyCode){
 					$("#submenu_list li").eq(0).attr("class", "submenu_box focus");
 					y=0;
 					$(".text").html(jsonObj[y].synopsis);
+					var a=jsonObj[y].imageFileName.lastIndexOf("/");
+					imgName=jsonObj[y].imageFileName.substring(a, jsonObj[y].imageFileName.length);
+					$("img").attr("src", server+imgName);
 				// 페이지가 하나 이상 (다음 페이지 불러오기)
 				} else {
 					showNextTextList(current_cId, keyCode);
 					y=0;
 					$("#submenu_list li").eq(y).attr("class", "submenu_box focus");
 					$(".text").html(jsonObj[y].synopsis);
+					var a=jsonObj[y].imageFileName.lastIndexOf("/");
+					imgName=jsonObj[y].imageFileName.substring(a, jsonObj[y].imageFileName.length);
+					$("img").attr("src", server+imgName);
 				}
 			} 
 		}
@@ -396,7 +410,9 @@ function pressKeyboard(keyCode){
 				$("#submenu_list li").eq(y-1).attr("class", "submenu_box focus");
 				y=y-1;
 				$(".text").html(jsonObj[y].synopsis);
-//				$("img").attr("src", jsonObj[y].imageFileName);
+				var a=jsonObj[y].imageFileName.lastIndexOf("/");
+				imgName=jsonObj[y].imageFileName.substring(a, jsonObj[y].imageFileName.length);
+				$("img").attr("src", server+imgName);
 				
 			// 맨 첫 항목에 포커스 위치할 때
 			} else if ( y == 0){
@@ -407,6 +423,9 @@ function pressKeyboard(keyCode){
 					$("#submenu_list li").eq(jsonObj.length-1).attr("class", "submenu_box focus");
 					y=jsonObj.length-1;
 					$(".text").html(jsonObj[y].synopsis);
+					var a=jsonObj[y].imageFileName.lastIndexOf("/");
+					imgName=jsonObj[y].imageFileName.substring(a, jsonObj[y].imageFileName.length);
+					$("img").attr("src", server+imgName);
 					
 				// 페이지가 하나 이상 (이전 페이지 불러오기)
 				} else if (totalPage > 1){
@@ -414,6 +433,9 @@ function pressKeyboard(keyCode){
 					$("#submenu_list li").eq(jsonObj.length-1).attr("class", "submenu_box focus");
 					y=jsonObj.length-1;
 					$(".text").html(jsonObj[y].synopsis);
+					var a=jsonObj[y].imageFileName.lastIndexOf("/");
+					imgName=jsonObj[y].imageFileName.substring(a, jsonObj[y].imageFileName.length);
+					$("img").attr("src", server+imgName);
 				}
 			}
 		}
@@ -435,7 +457,6 @@ function pressKeyboard(keyCode){
 			$("#bg_right").attr("class", "bg_right focus");
 			$("#submenu_list li:first").attr("class", "submenu_box focus");
 			y=0;
-			
 			focusIdx=2;
 		}
 		
