@@ -5,14 +5,16 @@
 <link rel="stylesheet" type="text/css" href="css/main.css" />
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
 <script type="text/javascript" src="getList.js"></script>
+<script type="text/javascript" src="controlFocus.js"></script>
+<script type="text/javascript" src="categoryList.js"></script>
 <script type="text/javascript">
+
 	window.onload = function() {
 		depth = 0;
-		getLeftMenuList("0");
-		showLeftMenu(depth, null);
-		showRightList(current_cId);
+		getCategoryMenuList("0");
+		showCategoryMenu(depth, null);
+		showRightMenu(current_cId);
 		$("#bg_left").attr("class", "bg_left focus");
-
 	};
 
 	// 키보드 누르면
