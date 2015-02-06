@@ -134,15 +134,7 @@ function showNextTextList(id){
 // 오른쪽 TextList 출력
 function getTextListOutput(param){
 	assetList=JSON.parse(loadJSON(pathForTextList, param)).assetList;
-	sub_output='<ul class="submenu_list" id="submenu_list">';
-	for (i=0; i<assetList.length; i++){
-		sub_output+='<li class="submenu_box">';
-		sub_output+='<span class="submenu_text">';
-		sub_output+='<span class="rank_title02">';
-		sub_output+=assetList[i].title+'</span><span class="won"></span>';
-		sub_output+='</span></li>';
-	}
-	sub_output+='</ul>';
+	sub_output=new EJS({url: 'textList.ejs'}).render(assetList);
 	$("#bg_submenu").html(sub_output);
 	$(".text").html(assetList[0].synopsis);
 	var cnt=assetList[0].imageFileName.lastIndexOf("/");
