@@ -1,0 +1,12 @@
+<ul class="submenu_list" id="submenu_list">
+	<% for (i=0; i<assetList.length; i++){ %>
+		<li class="submenu_box">
+			<span class="submenu_text">
+				<span class="rank_title02">
+					<%= assetList[i].title %>
+				</span>
+				<span class="won"></span>
+			</span>
+		</li>
+	<% } %>
+</ul>
